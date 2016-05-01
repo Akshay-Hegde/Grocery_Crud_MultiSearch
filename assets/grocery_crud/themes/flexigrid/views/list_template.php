@@ -139,13 +139,16 @@ if($success_message !== null){?>
 		<table>
 		   <tr>
 			<td>
-				Basic Search
+				Basic Search &nbsp;&nbsp;
 			</td>
 			<td>
 			   <input class="search_type_<?php echo $unique_hash; ?>" type="radio" name="radio_search_type" value="basic" checked="checked"/>
-			</td>
+                        </td>
+                        <td>
+                            &nbsp;&nbsp; || &nbsp;&nbsp;
+                        </td>
 			<td>
-				Advanced Search
+				Advanced Search &nbsp;&nbsp;
 			</td>
 			<td>
 				<input class="search_type_<?php echo $unique_hash; ?>" type="radio" name="radio_search_type" value="advanced"/>
@@ -208,7 +211,7 @@ if($success_message !== null){?>
 				
 				<!-- Field Operation dropdown -->
 			 	<td>
-					<select class="option_selection_common <?php echo $class;?>" data="<?php echo $column->field_name;?>" name="ADV_operation_<?php echo $column->field_name;?>">
+					<select class="option_selection_common <?php echo $class;?>" data="<?php echo $column->field_name;?>" name="ADV_operation_<?php echo $column->field_name;?>"  id="ADV_data_<?php echo $column->field_name;?>">
 						<?php echo $options[$option_type[$column->field_name]];?>
 					</select>
 				</td>
@@ -217,7 +220,9 @@ if($success_message !== null){?>
 
 					<!-- Single Input -->
 					<div class="<?php echo $column->field_name;?>_main">
-					  <input style="display:none;" <?php echo (is_null($extra_attr)?"":$extra_attr); ?> class="<?php echo $other_class;?>"  name="ADV_data_<?php echo $column->field_name?>" type="<?php echo $type; ?>" />
+                                         <!-- allcell data to test-->
+					  <input style="display:none;" <?php echo (is_null($extra_attr)?"":$extra_attr); ?> class="<?php echo $other_class;?>   allcelldata_<?php echo $unique_hash; ?>"  name="ADV_data_<?php echo $column->field_name?>" type="<?php echo $type; ?>" />
+                                        <!-- end test-->
 					</div>
 
 				      <?php if($other_class !=""){?>
@@ -428,7 +433,31 @@ var times=function(options)
 				$("#advanced_search_<?php echo $unique_hash; ?>").show();
 			}
 		});
-	
+                
+                //-----------------------------------------------------------------------------------------------------------------------------------
+                //
+                var trigger =false;
+                $('.allcelldata_'+unique_hash).each(function() {
+                                   if(readCookie($(this)[0]['name']+'_'+unique_hash)!==null)
+                                   {  
+                                       if($(".search_type_"+unique_hash).val()==='basic')
+                                       {
+                                            //click to change value from basic to advanced
+                                            $(".search_type_"+unique_hash).click();
+                          
+                                       }
+
+                                    $('#'+$(this)[0]['name']).val(readCookie($(this)[0]['name']+'_'+unique_hash).split('_')[0]);
+
+                                   $('[name ='+$(this)[0]['name']+']').val(readCookie($(this)[0]['name']+'_'+unique_hash).split('_').slice(1).join('_'));
+                                   $('[name ='+$(this)[0]['name']+']').show();
+                                      trigger =true;
+                                  }
+                        });
+               
+                        if(trigger)
+                        $('#filtering_form').trigger('submit');
+     
 		// Unique id - unchanged
 		var adv_id = "#advanced_search_<?php echo $unique_hash; ?>";
 
@@ -619,6 +648,19 @@ var times=function(options)
 		// On click
 		$('form[data="<?php echo $unique_hash; ?>"]').find('.search_clear').on("click",function()
 		{
+                  
+                  //erase all cookies with advanced search data
+                $('.allcelldata_'+unique_hash).each(function() {
+                                   if(readCookie($(this)[0]['name']+'_'+unique_hash)!==null)
+                                   {  
+                                      
+                                   
+                                      eraseCookie($(this)[0]['name']+'_'+unique_hash);
+                                 
+                                 
+                                  }
+                        });
+               
 			// Reset all input and select from advanced_search_* div
 			$("#advanced_search_<?php echo $unique_hash; ?>").children().find('input,select').each(function(){
   				if($(this).getType() =="select"){
