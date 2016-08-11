@@ -202,6 +202,8 @@ if($success_message !== null){?>
 							
 							// disable user editing, only allow picker
 							 $extra_attr = 'readonly="readonly"';
+							 $script = "<script>$(document).ready(function(){ $('#ADV_data_".$column->field_name."').change(function(){ if($.inArray($(this).val(), ['IN','NOT IN','LIKE','NOT LIKE']) != -1){ $('.".$column->field_name."_main').find('input').attr('readonly', false); }else { $('.".$column->field_name."_main').find('input').attr('readonly', 'readonly');}})});</script>";
+
 						}
 					}
 			?>
@@ -240,6 +242,7 @@ if($success_message !== null){?>
 					 </table>			
 					</div>
 					<?php } ?>
+					<?php echo $script;?>
 				</td>
 				<!-- Logic dropdown with next field -->
 				<td>
